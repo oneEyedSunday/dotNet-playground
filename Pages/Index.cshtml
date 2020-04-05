@@ -10,4 +10,24 @@
         Here I am learning dotNET. I hope to travel abroad this year.
         Germany is my country of choice.
     </p>
+
+
+    <p>The number of products are @Model.Products.Count().ToString()</p>
+
+    @if (Model.Products.Count() > 1)
+    {
+    <ul>
+        @foreach (var product in Model.Products)
+        {
+            <li>@product.Maker</li>
+        }
+    </ul>
+    }
+    else
+    {
+        <strong>No Products available now!!!</strong>
+    }
+    
+
+   
 </div>
