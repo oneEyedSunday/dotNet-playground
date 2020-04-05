@@ -25,6 +25,11 @@ namespace ContosoCrafts.Services
             }
         }
 
+        public Product GetProduct(string productId)
+        {
+            return GetProducts().First(product => product.Id == productId);
+        }
+
         public IEnumerable<Product> GetProducts()
         {
             using StreamReader jsonFileReader = File.OpenText(JsonSrcFileName);

@@ -29,6 +29,13 @@ namespace ContosoCrafts.Controllers
             return ProductsService.GetProducts();
         }
 
+        [HttpGet]
+        [Route("{productId}")]
+        public Product GetProduct(string productId)
+        {
+            return ProductsService.GetProduct(productId);
+        }
+
         [HttpPatch]
         [Route("rate/{productId}")]
         public ActionResult GetSomething(string productId, [FromBody]RateRequest request)
