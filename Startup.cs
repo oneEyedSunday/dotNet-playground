@@ -55,12 +55,7 @@ namespace ContosoCrafts
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapGet("/products", context =>
-                {
-                    return context.Response.WriteAsync(
-                        JsonSerializer.Serialize<IEnumerable<Product>>(app.ApplicationServices.GetService<Products>().GetProducts())
-                    );
-                });
+                endpoints.MapControllers();
             });
         }
     }
