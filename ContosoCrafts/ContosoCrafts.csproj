@@ -19,5 +19,12 @@
     <Folder Include="Services\" />
     <Folder Include="Controllers\" />
     <Folder Include="Controllers\Requests\" />
+    <Folder Include="Components\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Components\ProductList.cshtml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Components\ProductList.cshtml" />
   </ItemGroup>
 </Project>
