@@ -1,0 +1,31 @@
+﻿@page
+@using ContosoCrafts.Components
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>
+        Here I am learning dotNET. I hope to travel abroad this year.
+        Germany is my country of choice.
+    </p>
+
+
+    <p>The number of products are @Model.Products.Count().ToString()</p>
+
+    @if (Model.Products.Count() > 1)
+    {
+        @(await Html.RenderComponentAsync<ProductList>(RenderMode.ServerPrerendered))
+    }
+    else
+    {
+        <strong>No Products available now!!!</strong>
+    }
+    
+
+   
+</div>
+
+<script src="_framework/blazor.server.js"></script>
