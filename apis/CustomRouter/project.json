@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "buildOptions": {
+    "debugType": "portable",
+    "emitEntryPoint": true
+  },
+  "dependencies": {},
+  "frameworks": {
+    "netcoreapp3.1": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform"
+        },
+        "Microsoft.AspNetCore.Server.Kestrel": "3.1.1",
+        "Microsoft.AspNetCore.Routing": "3.1.1"
+      },
+      "imports": [
+      ]
+    }
+  }
+}
