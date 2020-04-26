@@ -12,6 +12,9 @@ namespace local
             numbers.Push(42);
             numbers.Push(0);
             Console.WriteLine("Size of stack is {0}, Top is {1}", numbers.Size, numbers.Peek());
+
+            Set<int> jerseyNumbers = new Set<int>();
+            Console.WriteLine("My jersey numbers set: {0}", jerseyNumbers.ToString());
         }
     }
 }
