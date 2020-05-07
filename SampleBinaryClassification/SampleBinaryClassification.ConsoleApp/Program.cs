@@ -5,6 +5,7 @@
 //*****************************************************************************************
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.ML;
@@ -34,13 +35,43 @@ namespace SampleBinaryClassification.ConsoleApp
             // Create sample data to do a single prediction with it 
             ModelInput sampleData = CreateSingleDataSample(mlContext, DATA_FILEPATH);
 
-            // Try a single prediction
-            ModelOutput predictionResult = predEngine.Predict(sampleData);
+            List<ModelInput> misMatched = new List<ModelInput>();
 
-            Console.WriteLine($"Single Prediction --> Actual value: {sampleData.Sentiment} | Predicted value: {predictionResult.Prediction}");
 
+            foreach (var sample in CreateNDataSample(mlContext, DATA_FILEPATH, 1500))
+            {
+                // Try a single prediction
+                ModelOutput _predictionResult = predEngine.Predict(sample);
+
+                //Console.WriteLine($"Single Prediction --> Actual value: {sample.Sentiment} | Predicted value: {_predictionResult.Prediction}");
+
+                if (sample.Sentiment != _predictionResult.Prediction) misMatched.Add(sample);
+            }
+
+      
             Console.WriteLine("=============== End of process, hit any key to finish ===============");
+            Console.WriteLine("=============== Number of mismatches {0} ===========================", misMatched.Count);
+
+            foreach (var input in misMatched)
+            {
+                Console.WriteLine("`{0}` is actually {1}", input.Text, input.Sentiment);
+            }
             Console.ReadKey();
+        }
+
+
+        private static List<ModelInput> CreateNDataSample(MLContext mlContext, string dataFilePath, short sampleCount)
+        {
+            // Read dataset to get a single row for trying a prediction          
+            IDataView dataView = mlContext.Data.LoadFromTextFile<ModelInput>(
+                                            path: dataFilePath,
+                                            hasHeader: true,
+                                            separatorChar: ',',
+                                            allowQuoting: true,
+                                            allowSparse: false);
+
+            return mlContext.Data.CreateEnumerable<ModelInput>(dataView, false).Take(sampleCount).ToList();
+
         }
 
         // Method to load single row of data to try a single prediction
