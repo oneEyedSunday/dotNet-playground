@@ -1,46 +1,8 @@
 #!/usr/local/Cellar/python/3.7.6_1/bin/python3
 
-
-from dotenv import load_dotenv
-# from twitter import *
 from os import getenv, walk, path
-from tweepy import API, OAuthHandler
 from csv import reader as CSVReader, writer as CSVWriter
 import time
-
-load_dotenv(verbose=True)
-
-
-settings = {
-        "token": getenv('token'), "token_secret": getenv('token_secret'), "consumer_key": getenv('consumer_key'),"consumer_secret": getenv('consumer_secret')
-        }
-
-"""
-
-t = Twitter(auth=OAuth(settings.get("token"), settings.get("token_secret"), settings.get("consumer_key"), settings.get("consumer_secret")))
-
-t.statuses.oembed(1240727808080410000)
-
-"""
-
-"""
-
-id_of_tweet = 124072780808041
-
-auth = OAuthHandler(settings.get("consumer_key"), settings.get("consumer_secret"))
-auth.set_access_token(settings.get("token"), settings.get("token_secret"))
-api = API(auth)
-
-tweet = api.get_status(1257955497224912896)
-print(tweet.__dict__.keys())
-print("-----------------------------------------------------------------------")
-print(vars(tweet))
-print("------------------------------------------------------------------------")
-print(tweet)
-print("------------------------------------------------------------------------")
-print(tweet.text)
-
-"""
 
 
 def get_files_in_dir(path="."):
