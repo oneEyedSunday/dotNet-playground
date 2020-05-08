@@ -3,7 +3,7 @@
 
 from dotenv import load_dotenv
 # from twitter import *
-from os import getenv, walk
+from os import getenv, walk, path
 from tweepy import API, OAuthHandler
 from csv import reader as CSVReader, writer as CSVWriter
 import time
@@ -53,7 +53,7 @@ def get_files_in_dir(path="."):
 
 def read_csv_into_list(csv_path):
     a_list = list()
-    with open(csv_path, newline='') as stream:
+    with open(path.join("input", csv_path), newline='') as stream:
         for row in CSVReader(stream):
             a_list.append(row)
     return a_list
@@ -68,7 +68,7 @@ def read_csv_into_list_with_limit(csv_path, limit=10):
 
 
 def write_csv_into_file(file_path, data_list, headers):
-    with open(file_path, 'w', newline='') as stream:
+    with open(path.join("output", file_path), 'w', newline='') as stream:
         writer = CSVWriter(stream, delimiter=',')
         writer.writerow(headers)
         writer.writerows(data_list)
@@ -85,19 +85,27 @@ def merge_data(to_filter, with_sentiment_score):
     return [new_list(float(as_dict.get(item[0])), item) for item in to_filter if item[0] in as_dict]
 
 
+def merge_data_for_day(score_file_name_list, tweet_data_file_name, store_as_name = f'merged.{str(time.time())}.csv'):
+        withSentiments = []
+        for file_name in score_file_name_list:
+                withSentiments.extend(read_csv_into_list(file_name)[1:])
+        tweet_data = read_csv_into_list(tweet_data_file_name)
+
+        print(f"All Sentiments are {len(withSentiments)} long while the tweet data has {len(tweet_data)} records")
+
+        ### Merge data from both sources
+
+        merged = merge_data(tweet_data[1:], withSentiments)
+        print('Size of found data: {}'.format(len(merged)))
+        header = list(['sentiment'])
+        header.extend(tweet_data[0])
+        write_csv_into_file(store_as_name, merged, header)
+
+
 if __name__ == '__main__':
-    withSentiments = read_csv_into_list("./corona_tweets_01.csv")
-    withTweetData = read_csv_into_list("./2020-03-20 Coronavirus Tweets.CSV")
-
-    id_filter = [id_str[0] for id_str in withSentiments[1:]]
-
-    print('Size of original data set: ', len(withTweetData[1:]))
     start_sec = time.time()
-
-    merged = merge_data(withTweetData, withSentiments[1:])
-    print('Size of found data: {0}', len(merged))
-    print('Duration in seconds: {0}', time.time() - start_sec)
-    header = list(['sentiment'])
-    header.extend(withTweetData[0])
-    write_csv_into_file("./merged.csv", merged, header)
+    merge_data_for_day(["corona_tweets_01.csv", "corona_tweets_02.csv", "corona_tweets_03.csv"], \
+     "2020-03-20 Coronavirus Tweets.CSV",\
+      "raw_merged_2020-03-20.csv")
+    print('Duration in seconds: {}'.format(time.time() - start_sec))
 
