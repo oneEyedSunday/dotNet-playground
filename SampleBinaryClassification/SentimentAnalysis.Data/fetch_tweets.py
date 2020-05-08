@@ -29,10 +29,11 @@ def read_csv_into_list_with_limit(csv_path, limit=10):
     return a_list
 
 
-def write_csv_into_file(file_path, data_list, headers):
+def write_csv_into_file(file_path, data_list, headers = None):
     with open(path.join("output", file_path), 'w', newline='') as stream:
         writer = CSVWriter(stream, delimiter=',')
-        writer.writerow(headers)
+        if headers:
+            writer.writerow(headers)
         writer.writerows(data_list)
 
 

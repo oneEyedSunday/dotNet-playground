@@ -2,3 +2,5 @@
 .idea
 *.csv
 credentials.json
+__pycache__
+input/*
