@@ -47,27 +47,37 @@ namespace CsvHelperTools
             {
                 csv.Read();
                 csv.ReadHeader();
-                while (csv.Read() && csv.GetField("lang") == "en")
+                
+                while (csv.Read() && passesSanityChecks(csv))
                 {
                     var record = new TwitterCsvData
                     {
                         sentiment = double.Parse(csv.GetField<string>("sentiment"), CultureInfo.InvariantCulture) > 0.5,
                         status_id = csv.GetField("status_id"),
                         user_id = csv.GetField("user_id"),
-                        text = csv.GetField("text").Replace(Environment.NewLine, "").Replace("\r\n", ""),
+                        // TODO (oneeyedsunday) clean text of emojis, etc, links hashtags
+                        text = csv.GetField("text").Replace(Environment.NewLine, " ").Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " "),
                         source = csv.GetField("source"),
                         is_quote = csv.GetField<bool>("is_quote"),
                         lang = csv.GetField("lang"),
                         favourites_count = csv.GetField("favourites_count"),
                         retweet_count = csv.GetField("retweet_count")
                     };
-                    records.Add(record);
+                    if (!String.IsNullOrEmpty(record.text)) records.Add(record);
                 }
 
                 System.Console.WriteLine("Number of records read {0}", records.Count);
             }
             return records;
         }
+
+        static bool passesSanityChecks(CsvReader reader)
+        {
+            if (String.IsNullOrEmpty(reader.GetField("sentiment"))) return false;
+            string text = reader.GetField("text");
+            string lang = reader.GetField("lang");
+            return (!(String.IsNullOrEmpty(text) || String.IsNullOrWhiteSpace(text)) && lang == "en");
+        } 
 
         static void WriteToFile(List<ITwitter> records, string path)
         {
