@@ -11,9 +11,31 @@ namespace CsvHelperTools
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Reading in csv file to remove line breaks!");
+            Console.WriteLine("Reading in csv file(s) to format for mlnet!");
+            string fromPath = null, toPath = null;
 
-            WriteToFile(ReadFromFile("/Users/ispoa/Workspace/project/SentimentAnalysis.Data/merged.csv"), "/Users/ispoa/projects/dotnetplay/data.csv");
+            switch (args.Length)
+            {
+                case 1:
+                    fromPath = args[0];
+                    Console.WriteLine("Saving to {0}, this will delete any files present there !!!", Path.Combine("../", "data.csv"));
+                    Console.ReadKey();
+                    toPath = "../data.csv";
+                    break;
+                case 0:
+                    Console.WriteLine("Please pass in, paths for the input and output files");
+                    Console.WriteLine("Usage: *.exe fromPath toPath");
+                    System.Environment.Exit(255);
+                    break;
+                default:
+                    fromPath = args[0];
+                    toPath = args[1];
+                    break;
+            }
+
+            Console.WriteLine("Reading from {0} and writing to {1}...", fromPath, toPath);
+
+            WriteToFile(ReadFromFile(fromPath), toPath);
            
         }
 
