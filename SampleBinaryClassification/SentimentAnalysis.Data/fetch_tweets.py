@@ -67,8 +67,10 @@ def merge_data_for_day(score_file_name_list, tweet_data_file_name, store_as_name
 
 if __name__ == '__main__':
     start_sec = time.time()
-    merge_data_for_day(["corona_tweets_01.csv", "corona_tweets_02.csv", "corona_tweets_03.csv"], \
-     "2020-03-20 Coronavirus Tweets.CSV",\
-      "raw_merged_2020-03-20.csv")
+    # merge_data_for_day(["corona_tweets_01.csv", "corona_tweets_02.csv", "corona_tweets_03.csv"], \
+    #  "2020-03-20 Coronavirus Tweets.CSV",\
+    #   "raw_merged_2020-03-20.csv")
+    # merge_data_for_day(["corona_tweets_10.csv", "corona_tweets_11.csv"],\
+    #      "2020-03-28 Coronavirus Tweets.CSV", "raw_merged_2020-03-27-29.csv")
     print('Duration in seconds: {}'.format(time.time() - start_sec))
 
