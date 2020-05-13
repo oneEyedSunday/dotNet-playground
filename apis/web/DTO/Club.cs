@@ -10,6 +10,8 @@ namespace web.DTO
 
     public string Stadium { get; set; }
 
+    public string ManagerName { get; set; }
+
     public List<string> NickNames { get; set; }
 
     public DateTime _Founded;

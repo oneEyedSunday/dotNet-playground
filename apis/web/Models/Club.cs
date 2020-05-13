@@ -10,6 +10,8 @@ namespace web.Models
 
     public DateTime Founded { get; private set; }
 
+    public Person Manager { get; private set; }
+
     public string Name { get; }
 
     public List<string> NickNames { get; } = new List<string>();
@@ -39,6 +41,12 @@ namespace web.Models
     public Club FoundedAt(string founded)
     {
       Founded = DateTime.Parse(founded);
+      return this;
+    }
+
+    public Club HireManager(Person manager)
+    {
+      Manager = manager;
       return this;
     }
   }
