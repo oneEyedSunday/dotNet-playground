@@ -1,5 +1,6 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace CRUD
 {
@@ -9,36 +10,92 @@ namespace CRUD
         {
             using (DatabaseContext db = new DatabaseContext())
             {
-                Console.WriteLine("Listing Items in Virtual Store...");
-                foreach(Product product in db.Products)
-                {
-                    Console.WriteLine($"Product: {product.Description} priced at ${product.Price:F2}");
-                }
-                foreach(OrderItem orderItem in db.OrderItems)
-                {
-                    Console.WriteLine($"Item: {orderItem.Quantity} pieces of {orderItem.Product.Description}");
-                }
-                foreach(Order order in db.Orders)
-                {
-                    Console.WriteLine($"Order: {order.Created}");
-                }
-
-                Console.WriteLine("Do you want to add a product?(y/N): ");
-                char addProduct;
-                addProduct =  Convert.ToChar(Console.Read());
-
-                if (addProduct.ToString().ToLower().Equals("y"))
-                {
-
-
-                    CreateProduct(db);
-                    CreateOrderItem(db);
-                }
-               
+                GetAndRunOperations(db);
 
                 Console.WriteLine("Disposing connection...");
             }
         }
+
+        static char GetSelection()
+        {
+            Console.WriteLine("What do you want to do: ");
+            Console.WriteLine(@"
+            1) List Products
+            2) List Orders
+            3) Add Product
+            4) Add Order
+            5) Exit
+            ");
+            char selection = Convert.ToChar(Console.Read());
+            Console.ReadLine();
+
+            return selection;
+        }
+
+        static void GetAndRunOperations(DatabaseContext db)
+        {
+            while (true)
+            {
+                switch (GetSelection())
+                {
+                    case '1':
+                        ListProducts(db);
+                        break;
+
+                    case '2':
+                        ListOrders(db);
+                        break;
+
+                    case '3':
+                        CreateProduct(db);
+                        break;
+
+                    default:
+                        QuitApplication();
+                        return;
+                }
+            }
+        }
+
+
+        static void ListProducts(DatabaseContext db)
+        {
+            if (db.Products.Count() == 0)
+            {
+                Console.WriteLine("[+] No Products found");
+                return;
+            }
+            Console.WriteLine("Listing Products in Virtual Store...");
+            foreach (Product product in db.Products)
+            {
+                Console.WriteLine($"[+] Product: {product.Description} priced at ${product.Price:F2}");
+            }
+        }
+
+        static void ListOrders(DatabaseContext db)
+        {
+            List<Order> orders = db.Orders.ToList<Order>();
+            if (orders.Count == 0)
+            {
+                Console.WriteLine("[+] No Orders found");
+                return;
+            }
+            Console.WriteLine("Listing Orders in Virtual Store...");
+            foreach (Order order in orders)
+            {
+                Console.WriteLine("[+] Order {0} has {1} items", order.OrderId, order.Items.Count);
+                if (order.Items.Count == 0)
+                {
+                    return;
+                }
+                Console.WriteLine("Listing them...");
+                foreach (OrderItem item in order.Items)
+                {
+                    Console.WriteLine("[+] {0} pieces of {1}", item.Quantity, item.Product.Description);
+                }
+            }
+        }
+
 
         static void CreateProduct(DatabaseContext db)
         {
@@ -82,6 +139,12 @@ namespace CRUD
                 return;
             }
             
+        }
+
+        static void QuitApplication()
+        {
+            Console.WriteLine("Closing Application...");
+            Environment.Exit(1);
         }
     }
 }
