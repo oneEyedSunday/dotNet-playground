@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
@@ -9,13 +10,17 @@ namespace CRUD
     {
         public DbSet<Product> Products { get; set; }
 
-        public DbSet<OrderItem> OrderItems;
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         public DbSet<Order> Orders { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
         {
-            optionBuilder.UseSqlite("Data Source=database.sqlite");
+            string fullPathToDB = (Path.Combine(
+                new FileInfo(typeof(Program).Assembly.Location).DirectoryName,
+                "../../../database.sqlite")
+            );
+            optionBuilder.UseSqlite($"Data Source={fullPathToDB}");
         }
     }
 
