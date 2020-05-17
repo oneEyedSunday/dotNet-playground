@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>sunday.idiakose.structures</PackageId>
-    <Version>0.0.1-beta</Version>
+    <Version>0.0.2</Version>
     <Authors>sunday.idiakose</Authors>
     <Company></Company>
   </PropertyGroup>
