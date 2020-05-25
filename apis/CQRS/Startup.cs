@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using CQRSDemo.Queries.Handlers;
+using CQRSDemo.Commands.Handlers;
 using AutoMapper;
 
 namespace CQRSDemo
@@ -45,6 +46,7 @@ namespace CQRSDemo
             services.AddLogging();
 
             services.AddScoped<PeopleQueryHandler>();
+            services.AddScoped<PeopleCommandHandler>();
 
         }
 

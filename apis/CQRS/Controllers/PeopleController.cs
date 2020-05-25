@@ -4,6 +4,9 @@ using Microsoft.Extensions.Logging;
 using CQRSDemo.DTO;
 using CQRSDemo.Queries;
 using CQRSDemo.Queries.Handlers;
+using CQRSDemo.Requests;
+using CQRSDemo.Commands;
+using CQRSDemo.Commands.Handlers;
 
 namespace CQRSDemo.Controllers
 {
@@ -13,16 +16,20 @@ namespace CQRSDemo.Controllers
     {
         public PeopleController(
             ILogger<PeopleController> logger,
-            PeopleQueryHandler peopleQueryHandler
+            PeopleQueryHandler peopleQueryHandler,
+            PeopleCommandHandler peopleCommandHandler
             )
         {
             _logger = logger;
             _peopleQueryHandler = peopleQueryHandler;
+            _peopleCommandHandler = peopleCommandHandler;
 
         }
 
         private readonly ILogger<PeopleController> _logger;
         private readonly PeopleQueryHandler _peopleQueryHandler;
+
+        private readonly PeopleCommandHandler _peopleCommandHandler;
 
 
         [HttpGet]
@@ -31,6 +38,14 @@ namespace CQRSDemo.Controllers
             _logger.LogInformation("Getting all persons");
             var query = new GetAllPeopleQuery();
             return _peopleQueryHandler.Handle(query);
+        }
+
+        [HttpPost]
+        public void AddPerson([FromBody] AddPersonRequest request)
+        {
+            _logger.LogInformation("Adding a person");
+            var command = AddPersonCommand.ConvertFromRequest(request);
+            _peopleCommandHandler.Handle(command);
         }
 
     }
