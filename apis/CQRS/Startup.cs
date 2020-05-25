@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using CQRSDemo.Queries.Handlers;
 using CQRSDemo.Commands.Handlers;
+using CQRSDemo.Services;
 using AutoMapper;
 
 namespace CQRSDemo
@@ -47,6 +48,7 @@ namespace CQRSDemo
 
             services.AddScoped<PeopleQueryHandler>();
             services.AddScoped<PeopleCommandHandler>();
+            services.AddScoped<CommandStoreService>();
 
         }
 
