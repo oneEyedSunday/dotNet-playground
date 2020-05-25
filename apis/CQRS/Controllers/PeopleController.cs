@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using CQRSDemo.Models;
+using CQRSDemo.DTO;
 using CQRSDemo.Queries;
 using CQRSDemo.Queries.Handlers;
 
@@ -26,7 +26,7 @@ namespace CQRSDemo.Controllers
 
 
         [HttpGet]
-        public  IEnumerable<Person> Get()
+        public  IEnumerable<PersonDTO> Get()
         {
             _logger.LogInformation("Getting all persons");
             var query = new GetAllPeopleQuery();

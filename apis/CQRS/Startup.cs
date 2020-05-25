@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using CQRSDemo.Queries.Handlers;
+using AutoMapper;
 
 namespace CQRSDemo
 {
@@ -29,6 +30,7 @@ namespace CQRSDemo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddAutoMapper(typeof(Startup));
             services.AddSwaggerGen(c =>
             {
               c.SwaggerDoc("v1", new OpenApiInfo { Title = "Some API", Version = "v1" });
