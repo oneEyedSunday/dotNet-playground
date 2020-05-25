@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomRouter", "CustomRoute
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "web", "web\web.csproj", "{5C06552E-1013-4FEF-8E8D-F008E21B16D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQRSDemo", "CQRS\CQRSDemo.csproj", "{0ED31547-D320-4E91-9AEB-1D6F895C4715}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|anycpu = Debug|anycpu
@@ -19,5 +21,9 @@ Global
 		{5C06552E-1013-4FEF-8E8D-F008E21B16D5}.Debug|anycpu.Build.0 = Debug|Any CPU
 		{5C06552E-1013-4FEF-8E8D-F008E21B16D5}.Release|anycpu.ActiveCfg = Release|Any CPU
 		{5C06552E-1013-4FEF-8E8D-F008E21B16D5}.Release|anycpu.Build.0 = Release|Any CPU
+		{0ED31547-D320-4E91-9AEB-1D6F895C4715}.Debug|anycpu.ActiveCfg = Debug|Any CPU
+		{0ED31547-D320-4E91-9AEB-1D6F895C4715}.Debug|anycpu.Build.0 = Debug|Any CPU
+		{0ED31547-D320-4E91-9AEB-1D6F895C4715}.Release|anycpu.ActiveCfg = Release|Any CPU
+		{0ED31547-D320-4E91-9AEB-1D6F895C4715}.Release|anycpu.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
