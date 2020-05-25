@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using CQRSDemo.Queries.Handlers;
 
 namespace CQRSDemo
 {
@@ -27,10 +29,20 @@ namespace CQRSDemo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerGen(c => 
+            services.AddSwaggerGen(c =>
             {
               c.SwaggerDoc("v1", new OpenApiInfo { Title = "Some API", Version = "v1" });
             });
+
+            services.AddDbContextPool<DbContext, Models.AppDbContext>(options =>
+            {
+                options.UseSqlite("Data Source=database.sqlite");
+            });
+
+
+            services.AddLogging();
+
+            services.AddScoped<PeopleQueryHandler>();
 
         }
 
