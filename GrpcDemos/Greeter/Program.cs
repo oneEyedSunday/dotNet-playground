@@ -21,6 +21,12 @@ namespace Greeter
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    // https://docs.microsoft.com/en-us/aspnet/core/grpc/troubleshoot?view=aspnetcore-3.1#unable-to-start-aspnet-core-grpc-app-on-macos
+                    webBuilder.ConfigureKestrel(opts =>
+                    {
+                        // Setup HTTP/2 endpoint without TLS
+                        opts.ListenLocalhost(5000, options => options.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2);
+                    });
                     webBuilder.UseStartup<Startup>();
                 });
     }
