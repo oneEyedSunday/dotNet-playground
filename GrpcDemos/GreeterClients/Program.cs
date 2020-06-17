@@ -12,8 +12,16 @@ namespace GreeterClients
             // This switch must be set before creating the GrpcChannel/HttpClient.
             AppContext.SetSwitch(
                 "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-            using var channel = GrpcChannel.ForAddress("https://localhost:5001");
-            // var client = new GreeterClient(channel);
+            using var channel = GrpcChannel.ForAddress("http://localhost:5000");
+            var client = new Greeter.GreeterClient(channel);
+            var request = new HelloRequest { Name = "I'm back and i'm better" };
+
+            // Yes, Im making a sync request first...
+            var reply = client.SayHello(request);
+
+            Console.WriteLine($"Greet reply for hail `{request.Name}` is `{(reply.Message)}`!");
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
         }
     }
 }
