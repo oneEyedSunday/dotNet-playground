@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 // for dep injection in ConfigureServices
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 
 namespace BasicWithAuth
@@ -21,12 +23,28 @@ namespace BasicWithAuth
     {
         static async Task Main(string[] args)
         {
+            
             var app = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    
+                    var contentRoot = hostingContext.HostingEnvironment.ContentRootPath;
+                    var configPath = System.IO.Path.Combine(contentRoot, "./appsettings.json");
+
+                    bool isDev = hostingContext.HostingEnvironment.IsDevelopment();
+
+                    config.AddJsonFile(configPath, optional: isDev, reloadOnChange: isDev);
+                })
                 .ConfigureWebHostDefaults(_b =>
                 {
                     _b.Configure(Configure);
                     _b.ConfigureServices(ConfigureServices);
-                }).Build();
+                })
+                .Build();
+
+            var config = app.Services.GetRequiredService<IConfiguration>();
+            JwtSettings jwtSettings = JwtSettings.FromConfiguration(config);
+            
 
             await app.RunAsync();
         }
