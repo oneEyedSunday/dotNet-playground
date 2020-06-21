@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 // for dep injection in ConfigureServices
 using Microsoft.Extensions.DependencyInjection;
+// for IExceptionHandlerPathFEature
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 // for Configure extension method?
 // or for IWebHostBuilder
@@ -10,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 // for Host
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace BasicWithAuth
@@ -25,12 +28,29 @@ namespace BasicWithAuth
                     _b.ConfigureServices(ConfigureServices);
                 }).Build();
 
-            
             await app.RunAsync();
         }
 
         static void Configure(IApplicationBuilder app)
         {
+            app.UseExceptionHandler(_app =>
+            {
+                _app.Run(async context =>
+                {
+                    var feature = context.Features.Get<IExceptionHandlerPathFeature>();
+                    var exception = feature.Error;
+
+                    if (exception != null)
+                    {
+                        context.Response.ContentType = "application/json";
+                        var errorResponse = new {
+                            Error = true,
+                            Message = exception.Message
+                        };
+                        await JsonSerializer.SerializeAsync(context.Response.Body, errorResponse);
+                    }
+                });
+            });
             app.UseRouting();
             app.UseEndpoints((IEndpointRouteBuilder endpoints) =>
             {
@@ -42,6 +62,11 @@ namespace BasicWithAuth
                     });
                     return;
                 });
+
+
+
+                var todoApi = new TodoApi();
+                todoApi.MapRoutes(endpoints);
             });
         }
 
@@ -49,6 +74,7 @@ namespace BasicWithAuth
         static void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthorization();
+            services.AddDbContext<TodoDbContext>(opts => opts.UseInMemoryDatabase("Todos"));
         }
     }
 }
