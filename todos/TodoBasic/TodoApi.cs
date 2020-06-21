@@ -30,6 +30,9 @@ namespace Todos
             if (id == null || !long.TryParse(id, out var todoId))
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await JsonSerializer.SerializeAsync(context.Response.Body, new {
+                    message = "An Error Occured"
+                });
                 return;
             }
 
@@ -38,6 +41,9 @@ namespace Todos
             if (todo == null)
             {
                 context.Response.StatusCode = StatusCodes.Status404NotFound;
+                await JsonSerializer.SerializeAsync(context.Response.Body, new {
+                    message = "Todo Not Found"
+                });
                 return;
             }
 
@@ -52,6 +58,9 @@ namespace Todos
             using var db = new TodoDbContext();
             db.Todos.Add(todo);
             await db.SaveChangesAsync();
+            await JsonSerializer.SerializeAsync(context.Response.Body, new {
+                message = "Successfully created Todo"
+            });
         }
 
         public async Task Delete(HttpContext context)
@@ -68,11 +77,17 @@ namespace Todos
             if (todo == null)
             {
                 context.Response.StatusCode = StatusCodes.Status404NotFound;
+                await JsonSerializer.SerializeAsync(context.Response.Body, new {
+                    message = "Todo Not Found"
+                });
                 return;
             }
 
             db.Todos.Remove(todo);
             await db.SaveChangesAsync();
+            await JsonSerializer.SerializeAsync(context.Response.Body, new {
+                message = "Todo Not Found"
+            });
         }
 
         public void MapRoutes(IEndpointRouteBuilder endpoints)
@@ -81,6 +96,15 @@ namespace Todos
             endpoints.MapGet("/api/todos/{id}", Get);
             endpoints.MapPost("/api/todos", Post);
             endpoints.MapPost("/api/todos/{id}", Delete);
+            endpoints.MapGet("/api", async (HttpContext context) =>
+            {
+                context.Response.StatusCode = StatusCodes.Status409Conflict;
+                await JsonSerializer.SerializeAsync(context.Response.Body, new {
+                    message = "Welcome to this api.",
+                    meta = "Hey, I figured how to write arbitary json"
+                });
+                return;
+            });
         }
     }
 }

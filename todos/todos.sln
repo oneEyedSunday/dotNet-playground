@@ -1,7 +1,9 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoBasic", "TodoBasic\TodoBasic.csproj", "{8D192354-646D-46D4-9708-29CF859AEA3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicWithAuth", "BasicWithAuth\BasicWithAuth.csproj", "{7337871F-0D51-4D27-B78F-6E8FE22ED30C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,5 +15,9 @@ Global
 		{8D192354-646D-46D4-9708-29CF859AEA3C}.Debug|anycpu.Build.0 = Debug|anycpu
 		{8D192354-646D-46D4-9708-29CF859AEA3C}.Release|anycpu.ActiveCfg = Release|anycpu
 		{8D192354-646D-46D4-9708-29CF859AEA3C}.Release|anycpu.Build.0 = Release|anycpu
+		{7337871F-0D51-4D27-B78F-6E8FE22ED30C}.Debug|anycpu.ActiveCfg = Debug|Any CPU
+		{7337871F-0D51-4D27-B78F-6E8FE22ED30C}.Debug|anycpu.Build.0 = Debug|Any CPU
+		{7337871F-0D51-4D27-B78F-6E8FE22ED30C}.Release|anycpu.ActiveCfg = Release|Any CPU
+		{7337871F-0D51-4D27-B78F-6E8FE22ED30C}.Release|anycpu.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
