@@ -116,19 +116,18 @@ namespace BasicWithAuth
         public void MapRoutes(IEndpointRouteBuilder endpoints)
         {
             string prefix = "/api/v2/todos";
-            endpoints.MapGet(prefix, WithDbContext(GetAllAsync));
-            endpoints.MapGet(prefix + "/{id}", WithDbContext(GetAsync));
-            endpoints.MapPost(prefix, WithDbContext(PostAsync));
-            endpoints.MapPut(prefix + "/{id}", WithDbContext(PutAsync));
-            endpoints.MapDelete(prefix + "/{id}", WithDbContext(DeleteAsync));
+            endpoints.MapGet(prefix, WithDbContext(GetAllAsync)).RequireAuthorization();
+            endpoints.MapGet(prefix + "/{id}", WithDbContext(GetAsync)).RequireAuthorization(TodoPolicy.User);
+            endpoints.MapPost(prefix, WithDbContext(PostAsync)).RequireAuthorization();
+            endpoints.MapPut(prefix + "/{id}", WithDbContext(PutAsync)).RequireAuthorization(TodoPolicy.User);
+            endpoints.MapDelete(prefix + "/{id}", WithDbContext(DeleteAsync)).RequireAuthorization(TodoPolicy.Admin);
         }
 
         private RequestDelegate WithDbContext(Func<TodoDbContext, HttpContext, Task> bareHandler) =>
             context =>
             {
-                var db = context.RequestServices.GetService(typeof(TodoDbContext));
-                // var db = context.RequestServices.GetRequiredService<TodoDbContext>();
-                return bareHandler(db as TodoDbContext, context);
+                var db = context.RequestServices.GetRequiredService<TodoDbContext>();
+                return bareHandler(db, context);
             };
     }
 }

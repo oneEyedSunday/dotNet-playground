@@ -67,7 +67,9 @@ namespace BasicWithAuth
             await JsonSerializer.SerializeAsync(
                 context.Response.Body,
                 new {
-                    token =  new JwtSecurityTokenHandler().WriteToken(token), UserName = user.UserName, Email = user.Email },
+                    token =  new JwtSecurityTokenHandler().WriteToken(token),
+                    user.UserName,
+                    user.Email },
                 _options
                 );
         }
@@ -76,7 +78,7 @@ namespace BasicWithAuth
         {
             var authInfo = await JsonSerializer.DeserializeAsync<Auth>(context.Request.Body, _options);
 
-            var result = await userManager.CreateAsync(new BasicWithAuthUser { UserName = $"{authInfo.UserName}" }, authInfo.Password);
+            var result = await userManager.CreateAsync(new BasicWithAuthUser { UserName = $"user_{authInfo.UserName}" }, authInfo.Password);
 
             if (result.Succeeded)
             {

@@ -52,8 +52,7 @@ namespace BasicWithAuth
 
         static void Configure(IApplicationBuilder app)
         {
-            app.UseAuthentication();
-            app.UseAuthorization();
+            
             app.UseExceptionHandler(_app =>
             {
                 _app.Run(async context =>
@@ -73,6 +72,8 @@ namespace BasicWithAuth
                 });
             });
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints((IEndpointRouteBuilder endpoints) =>
             {
                 endpoints.MapGet("/api", async (HttpContext context) =>
@@ -99,8 +100,14 @@ namespace BasicWithAuth
             services.AddIdentityCore<BasicWithAuthUser>()
                 .AddEntityFrameworkStores<TodoDbContext>();
             services.AddDbContext<TodoDbContext>(opts => opts.UseInMemoryDatabase("Todos"));
-            services.AddAuthentication();
-            services.AddAuthorization();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                   .AddJwtBearer(options =>
+                   options.TokenValidationParameters = jwtSettings.TokenValidationParameters);
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(TodoPolicy.Admin, policy => policy.RequireClaim(TodoClaims.CanDelete, "true"));
+                options.AddPolicy(TodoPolicy.User, policy => policy.RequireClaim(TodoClaims.CanView, "true"));
+            });
         }
     }
 }
