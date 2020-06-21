@@ -12,12 +12,17 @@ namespace BasicWithAuth
 {
     public class TodoApi: IApi
     {
+        private static readonly JsonSerializerOptions _options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
         private async Task GetAllAsync(TodoDbContext dbContext, HttpContext context)
         {
             var todos = await dbContext.Todos.ToArrayAsync();
 
             context.Response.ContentType = "application/json";
-            await JsonSerializer.SerializeAsync<Todo []>(context.Response.Body, todos);
+            await JsonSerializer.SerializeAsync<Todo []>(context.Response.Body, todos, _options);
         }
 
         private async Task GetAsync(TodoDbContext dbContext, HttpContext context)
@@ -43,12 +48,12 @@ namespace BasicWithAuth
                 return;
             }
 
-            await JsonSerializer.SerializeAsync(context.Response.Body, todo);
+            await JsonSerializer.SerializeAsync(context.Response.Body, todo, _options);
         }
 
         private async Task PostAsync(TodoDbContext dbContext, HttpContext context)
         {
-            var todo = await JsonSerializer.DeserializeAsync<Todo>(context.Request.Body);
+            var todo = await JsonSerializer.DeserializeAsync<Todo>(context.Request.Body, _options);
 
             await dbContext.AddAsync(todo);
             await dbContext.SaveChangesAsync();
@@ -83,7 +88,7 @@ namespace BasicWithAuth
 
         public async Task PutAsync(TodoDbContext dbContext, HttpContext context)
         {
-            var todoUpdates = await JsonSerializer.DeserializeAsync<Todo>(context.Request.Body);
+            var todoUpdates = await JsonSerializer.DeserializeAsync<Todo>(context.Request.Body, _options);
             if (!context.Request.RouteValues.TryGetValue("id", out object idObj))
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;

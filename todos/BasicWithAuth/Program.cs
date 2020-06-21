@@ -33,6 +33,8 @@ namespace BasicWithAuth
 
         static void Configure(IApplicationBuilder app)
         {
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseExceptionHandler(_app =>
             {
                 _app.Run(async context =>
@@ -67,14 +69,19 @@ namespace BasicWithAuth
 
                 var todoApi = new TodoApi();
                 todoApi.MapRoutes(endpoints);
+                var authApi = new AuthApi();
+                authApi.MapRoutes(endpoints);
             });
         }
 
 
         static void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthorization();
+            services.AddIdentityCore<BasicWithAuthUser>()
+                .AddEntityFrameworkStores<TodoDbContext>();
             services.AddDbContext<TodoDbContext>(opts => opts.UseInMemoryDatabase("Todos"));
+            services.AddAuthentication();
+            services.AddAuthorization();
         }
     }
 }
