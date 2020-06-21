@@ -21,6 +21,7 @@ namespace BasicWithAuth
 {
     class Program
     {
+        static JwtSettings jwtSettings { get; set; }
         static async Task Main(string[] args)
         {
             
@@ -43,7 +44,7 @@ namespace BasicWithAuth
                 .Build();
 
             var config = app.Services.GetRequiredService<IConfiguration>();
-            JwtSettings jwtSettings = JwtSettings.FromConfiguration(config);
+            jwtSettings = JwtSettings.FromConfiguration(config);
             
 
             await app.RunAsync();
@@ -87,7 +88,7 @@ namespace BasicWithAuth
 
                 var todoApi = new TodoApi();
                 todoApi.MapRoutes(endpoints);
-                var authApi = new AuthApi();
+                var authApi = new AuthApi(jwtSettings);
                 authApi.MapRoutes(endpoints);
             });
         }
