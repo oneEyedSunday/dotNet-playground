@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "player.proto";
+
+option csharp_namespace = "FootieBio";
+
+package FootieBio;
+
+service CountryDirectory {
+    rpc GetCountry (CountryRequest) returns (CountryReply);
+    rpc GetAnyCountry (google.protobuf.Empty) returns (CountryReply);
+}
+
+message CountryRequest {
+    string country = 1;
+}
+
+message CountryReply {
+    string message = 1;
+    string country_full = 2;
+    repeated Player players = 3;
+}
