@@ -9,7 +9,7 @@ package FootieBio;
 
 service CountryDirectory {
     rpc GetCountry (CountryRequest) returns (CountryReply);
-    rpc GetAnyCountry (google.protobuf.Empty) returns (CountryReply);
+    rpc GetAnyCountry (google.protobuf.Empty) returns (stream CountryReply);
 }
 
 message CountryRequest {

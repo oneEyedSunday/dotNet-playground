@@ -1,0 +1,15 @@
+[
+    { "CountryFull": "Italy", "Message": "Four time World Champions; Home of Pizzas" },
+    { "CountryFull": "Morocco", "Message": "Fantastic Geography"  },
+    { "CountryFull": "Netherlands", "Message": "Bicycles" },
+    { "CountryFull": "Singapore", "Message": "City state; Wealthy" },
+    { "CountryFull": "Mali", "Message": "Mansa Musa, Timbuktu" },
+    { "CountryFull": "Maldives", "Message": "Ali Ashfaq" },
+    { "CountryFull": "Turkey", "Message": "Passionate footballer fans; Istanbul; Welcome to Hell" },
+    { "CountryFull": "Sweden", "Message": "Blonde haired; Slavic god; Rasta King" },
+    { "CountryFull": "Turkmenistan" },
+    { "CountryFull": "Mongolia", "Message": "Genghis Khan; Mongolian Throat singing" },
+    { "CountryFull": "Nepal", "Message": "Mount Everest" },
+    { "CountryFull": "San Marino", "Message": "The FM Challenge" },
+    { "CountryFull": "Mexico", "Message": "Sombroeroes; The 4th match curse" }
+]
