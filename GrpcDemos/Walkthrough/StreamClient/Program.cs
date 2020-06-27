@@ -26,8 +26,9 @@ namespace StreamClient
             {
                 await foreach (CountryReply countryData in streamingCall.ResponseStream.ReadAllAsync())
                 {
-                    Console.WriteLine(countryData.GetType());
-                    Console.WriteLine($"{countryData.CountryFull} | {countryData.Message} | {countryData.Players.Count} C");
+                    Console.WriteLine($@"{countryData.CountryFull}
+                                                                        {countryData.Message}
+                                                                        with {countryData.Players.Count} registered players");
                 }
             }
             catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled)

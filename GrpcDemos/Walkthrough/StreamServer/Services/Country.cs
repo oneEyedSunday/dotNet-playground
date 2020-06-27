@@ -14,13 +14,6 @@ namespace StreamServer
     {
         private readonly ILogger<CountryService> _logger;
 
-        private static readonly string[] Countries = {
-            "Netherlands", "Singapore", "Mali", "Morocco",
-            "Belgium", "Canada", "Myammar", "Maldives", "Guam",
-            "Goa", "Germany", "Turkey", "Sweden", "Mexico",
-            "Turkmenistan", "Mongolia", "Nepal", "San Marino"
-        };
-
         public CountryService(ILogger<CountryService> logger)
         {
             _logger = logger;
@@ -35,33 +28,28 @@ namespace StreamServer
             });
         }
 
+        private IEnumerable<Player> GetPlayersFromCountry(string country)
+        {
+            return DatabaseService.GetPlayers()
+                    .Where((Player candidate) => (String.Equals(country, candidate.Country, StringComparison.OrdinalIgnoreCase)));
+        }
+
         public override async Task GetAnyCountry(Empty _, IServerStreamWriter<CountryReply> responseStream, ServerCallContext context)
         {
             var _randomGen = new Random();
             DateTime now = DateTime.UtcNow;
 
-            short index = 0;
+            var Countries = DatabaseService.GetCountries().ToArray();
 
-            while (index < 5)
+            foreach (var country in DatabaseService.GetCountries())
             {
                 _logger.LogInformation("Generating country info...");
-                var country = new CountryReply
-                {
-                    Message = "Fetched country successfully",
-                    CountryFull = Countries[index >= Countries.Length ? Countries.Length - 1 : index]
-                };
 
-                country.Players.AddRange(new Player[]
-                {
-                    new Player {  Name = "Antonio Di Natalie", Country = "Italy" },
-                    new Player { Name = "Thorgan Hazard", Country = "Belgium" },
-                    new Player { Name = "Pele", Country = "Brazil" }
-                });
+                country.Players.AddRange(GetPlayersFromCountry(country.CountryFull));
 
                 _logger.LogInformation("Writing country response");
 
                 await responseStream.WriteAsync(country);
-                index++;
             }
         }
     }
