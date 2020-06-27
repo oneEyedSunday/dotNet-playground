@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "FootieBio";
+
+package FootieBio;
+
+service PlayerDirectory {
+    rpc GetPlayer (PlayerRequest) returns (PlayerReply);
+    rpc GetPlayers (google.protobuf.Empty) returns (PlayersReply);
+}
+
+message PlayerRequest {
+  string name = 1;
+  int32 country_id = 2;
+}
+
+message Player {
+    string name = 1;
+    google.protobuf.Timestamp date_of_birth = 2;
+    string country = 3;
+    int32 club_id = 4;
+}
+
+message PlayerReply {
+    string message = 1;
+    Player player = 2;
+}
+
+message PlayersReply {
+  string message = 1;
+  repeated Player players = 2;
+}
+
