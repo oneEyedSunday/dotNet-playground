@@ -13,10 +13,12 @@ namespace StreamServer
     public class CountryService : CountryDirectoryBase
     {
         private readonly ILogger<CountryService> _logger;
+        private readonly DatabaseService _Db;
 
-        public CountryService(ILogger<CountryService> logger)
+        public CountryService(ILogger<CountryService> logger, DatabaseService database)
         {
             _logger = logger;
+            _Db = database;
         }
 
         public override Task<CountryReply> GetCountry(CountryRequest request, ServerCallContext context)
@@ -30,7 +32,7 @@ namespace StreamServer
 
         private IEnumerable<Player> GetPlayersFromCountry(string country)
         {
-            return DatabaseService.GetPlayers()
+            return _Db.GetPlayers()
                     .Where((Player candidate) => (String.Equals(country, candidate.Country, StringComparison.OrdinalIgnoreCase)));
         }
 
@@ -39,9 +41,7 @@ namespace StreamServer
             var _randomGen = new Random();
             DateTime now = DateTime.UtcNow;
 
-            var Countries = DatabaseService.GetCountries().ToArray();
-
-            foreach (var country in DatabaseService.GetCountries())
+            foreach (var country in _Db.GetCountries())
             {
                 _logger.LogInformation("Generating country info...");
 

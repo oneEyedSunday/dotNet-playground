@@ -3,15 +3,23 @@ using System.IO;
 using System.Text.Json;
 using System.Collections.Generic;
 using FootieBio;
+using Microsoft.AspNetCore.Hosting;
 
 
 namespace StreamServer
 {
     public class DatabaseService
     {
-        private static string DataPath => "/Users/ispoa/Projects/DotNetPlay/GrpcDemos/Walkthrough/StreamServer/Data";
+        private string DataPath => Path.Combine(WebHostEnvironment.ContentRootPath, "Data");
 
-        public static IEnumerable<CountryReply> GetCountries()
+        private IWebHostEnvironment WebHostEnvironment { get; }
+
+        public DatabaseService(IWebHostEnvironment webHostEnvironment)
+        {
+            WebHostEnvironment = webHostEnvironment;
+        }
+
+        public IEnumerable<CountryReply> GetCountries()
         {
             using(var jsonFileReader = File.OpenText(Path.Combine(DataPath, "Countries.json")))
             {
@@ -23,7 +31,7 @@ namespace StreamServer
             }
         }
 
-        public static IEnumerable<Player> GetPlayers()
+        public IEnumerable<Player> GetPlayers()
         {
              using(var jsonFileReader = File.OpenText(Path.Combine(DataPath, "Players.json")))
             {
