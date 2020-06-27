@@ -20,7 +20,8 @@ namespace StreamClient
             using var channel = GrpcChannel.ForAddress("http://localhost:5000");
 
             var client = new CountryDirectoryClient(channel);
-            using var streamingCall = client.GetAnyCountry(new Empty());
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            using var streamingCall = client.GetAnyCountry(new Empty(), cancellationToken: cts.Token);
 
             try
             {

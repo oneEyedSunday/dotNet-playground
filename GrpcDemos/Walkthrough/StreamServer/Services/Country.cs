@@ -39,11 +39,15 @@ namespace StreamServer
         public override async Task GetAnyCountry(Empty _, IServerStreamWriter<CountryReply> responseStream, ServerCallContext context)
         {
             var _randomGen = new Random();
-            DateTime now = DateTime.UtcNow;
 
-            foreach (var country in _Db.GetCountries())
+            var _countryRator = _Db.GetCountries().GetEnumerator();
+
+            while (!context.CancellationToken.IsCancellationRequested && _countryRator.MoveNext())
             {
                 _logger.LogInformation("Generating country info...");
+                await Task.Delay(500 * _randomGen.Next(5));
+
+                var country = _countryRator.Current;
 
                 country.Players.AddRange(GetPlayersFromCountry(country.CountryFull));
 
