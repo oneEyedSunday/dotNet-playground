@@ -8,6 +8,8 @@ using Grpc.Net.Client;
 using FootieBio;
 using static FootieBio.CountryDirectory;
 using static FootieBio.PlayerDirectory;
+// using System.Collections.Generic;
+// using Grpc.Net.Compression;
 
 namespace StreamClient
 {
@@ -18,6 +20,7 @@ namespace StreamClient
             // This switch must be set before creating the GrpcChannel/HttpClient.
             AppContext.SetSwitch(
                 "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+            // using (var channel = GrpcChannel.ForAddress("http://localhost:5000", new GrpcChannelOptions { CompressionProviders = new List<ICompressionProvider>() }))
             using (var channel = GrpcChannel.ForAddress("http://localhost:5000"))
             {
                 var client = new CountryDirectoryClient(channel);

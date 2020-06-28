@@ -48,6 +48,9 @@ namespace StreamServer
             var _randomGen = new Random();
             var playersEnumberator = _Db.GetPlayers().GetEnumerator();
 
+            context.WriteOptions = new WriteOptions(WriteFlags.NoCompress);
+            responseStream.WriteOptions = new WriteOptions(WriteFlags.NoCompress);
+
             while (!context.CancellationToken.IsCancellationRequested && playersEnumberator.MoveNext())
             {
                 _logger.LogInformation("Generating player info...");
