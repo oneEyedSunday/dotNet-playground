@@ -23,11 +23,31 @@ namespace StreamServer
 
         public override Task<CountryReply> GetCountry(CountryRequest request, ServerCallContext context)
         {
-            return Task.FromResult(new CountryReply
+            _logger.LogInformation("Querying for country...");
+            CountryReply country = null;
+            try
             {
-                Message = "Fetched country Successfully",
-                CountryFull = "A Country FDR"
-            });
+                country = _Db.GetCountries()
+                .Where(candidate => String.Equals(request.Country, candidate.CountryFull, StringComparison.OrdinalIgnoreCase))
+                .First();
+            }
+            catch (Exception ex)
+            {
+                
+                _logger.LogError($"{ex.GetType()} occured; {ex.Message}; ");
+                country = new CountryReply {
+                    Message = ex.Message,
+                    CountryFull = ""
+                };
+            }
+
+            if (country.CountryFull != "")
+            {
+                country.Players.AddRange(GetPlayersFromCountry(country.CountryFull));
+            }
+
+
+            return Task.FromResult(country);
         }
 
         private IEnumerable<Player> GetPlayersFromCountry(string country)

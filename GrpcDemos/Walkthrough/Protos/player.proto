@@ -9,12 +9,14 @@ package FootieBio;
 
 service PlayerDirectory {
     rpc GetPlayer (PlayerRequest) returns (PlayerReply);
-    rpc GetPlayers (google.protobuf.Empty) returns (PlayersReply);
+    rpc GetPlayers (google.protobuf.Empty) returns (stream PlayersReply);
 }
 
 message PlayerRequest {
   string name = 1;
-  int32 country_id = 2;
+  // int32 country_id = 2; // remove country_id use country name instead
+  reserved "country_id"; // https://developers.google.com/protocol-buffers/docs/proto3#reserved_values
+  string country = 3;
 }
 
 message Player {
