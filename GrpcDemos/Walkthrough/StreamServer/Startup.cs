@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -16,7 +17,11 @@ namespace StreamServer
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddGrpc();
+            services.AddGrpc(grpcOpts =>
+			{
+                grpcOpts.ResponseCompressionLevel = CompressionLevel.Optimal;
+				grpcOpts.ResponseCompressionAlgorithm = "gzip";
+			});
             services.AddTransient<DatabaseService>();
         }
 
