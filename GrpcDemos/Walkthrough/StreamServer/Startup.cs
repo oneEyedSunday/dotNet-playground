@@ -21,7 +21,12 @@ namespace StreamServer
 			{
                 grpcOpts.ResponseCompressionLevel = CompressionLevel.Optimal;
 				grpcOpts.ResponseCompressionAlgorithm = "gzip";
-			});
+			})
+            .AddServiceOptions<PlayerService>(playerServiceOpts =>
+            {
+                playerServiceOpts.ResponseCompressionLevel = CompressionLevel.Optimal;
+                playerServiceOpts.ResponseCompressionAlgorithm = "gzip";
+            });
             services.AddTransient<DatabaseService>();
         }
 
@@ -38,6 +43,7 @@ namespace StreamServer
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<CountryService>();
+                endpoints.MapGrpcService<PlayerService>();
 
                 endpoints.MapGet("/", async context =>
                 {
