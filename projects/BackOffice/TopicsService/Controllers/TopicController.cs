@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using TopicsService.Domain.Exceptions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -40,7 +41,7 @@ namespace TopicsService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(int id)
         {
-            await Task.Delay(TimeSpan.FromSeconds(5));
+            await Task.Delay(TimeSpan.FromSeconds(1));
             try
             {
                 _logger.LogInformation($"Getting topic by id {id}");
@@ -50,12 +51,12 @@ namespace TopicsService.Controllers
             catch (System.InvalidOperationException ex)
             {
                 _logger.LogWarning(ex.Message);
-                return NotFound();
+                throw new TopicDomainNotFoundException(id);
             }
             catch (System.Exception ex)
             {
                 _logger.LogWarning(ex.Message);
-                throw;
+                throw ex;
             }
         }
     }
