@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +12,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Routing;
 
 namespace TopicsService
 {
+    public class _JsonResponse
+    {
+        public string Message { get; set; }
+    }
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -44,6 +51,11 @@ namespace TopicsService
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGet("/", async (context) =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status200OK;
+                    await JsonSerializer.SerializeAsync<_JsonResponse>(context.Response.Body, new _JsonResponse { Message = "We are here..." });
+                });
                 endpoints.MapControllers();
             });
         }
