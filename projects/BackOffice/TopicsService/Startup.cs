@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
@@ -17,10 +18,6 @@ using TopicsService.Infrastructure.Filters;
 
 namespace TopicsService
 {
-    public class _JsonResponse
-    {
-        public string Message { get; set; }
-    }
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -37,6 +34,22 @@ namespace TopicsService
             {
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
             });
+
+            services.AddMassTransit(options =>
+            {
+               var _config = new Dictionary<string, string> {
+                   ["Host"] = "localhost",
+                   ["UserName"] = "ispoa",
+                   ["Password"] = "password",
+                   ["VirtualHost"] = "my_vhost",
+                   ["Port"] = "5672",
+                   ["QueueName"] = "TopicSubscriptions"
+               };
+
+               options.AddBus(provider => ConfigureRabbitMQ(provider, _config));
+            });
+
+            services.AddMassTransitHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,10 +71,35 @@ namespace TopicsService
                 endpoints.MapGet("/", async (context) =>
                 {
                     context.Response.StatusCode = StatusCodes.Status200OK;
-                    await JsonSerializer.SerializeAsync<_JsonResponse>(context.Response.Body, new _JsonResponse { Message = "We are here..." });
+                    await JsonSerializer.SerializeAsync(context.Response.Body, new { Message = "We are here..." });
                 });
                 endpoints.MapControllers();
             });
+        }
+
+        private static IBusControl ConfigureRabbitMQ(IBusRegistrationContext context, Dictionary<string, string> config)
+        {
+
+            var bus = Bus.Factory.CreateUsingRabbitMq(cfg =>
+            {
+                // cfg.UseHealthCheck(context);
+                cfg.Host(config["Host"], config["VirtualHost"], rmqHost =>
+                {
+                    rmqHost.Username(config["UserName"]);
+                    rmqHost.Password(config["Password"]);
+                });
+
+                cfg.ReceiveEndpoint(config["QueueName"], rmqEndpoint =>
+                {
+                    rmqEndpoint.PrefetchCount = 100;
+                    rmqEndpoint.Durable = true;
+                    // rmqEndpoint.ConfigureConsumer<>(context);
+                });
+            });
+
+            bus.Start();
+
+            return bus;
         }
     }
 }

@@ -6,6 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="MassTransit" Version="7.0.1" />
+    <PackageReference Include="MassTransit.AspNetCore" Version="7.0.1" />
+    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.0.1" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="7.0.1" />
   </ItemGroup>
 
 

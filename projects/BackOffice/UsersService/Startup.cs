@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +27,21 @@ namespace UsersService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddMassTransit(options =>
+            {
+               var _config = new Dictionary<string, string> {
+                   ["Host"] = "localhost",
+                   ["UserName"] = "ispoa",
+                   ["Password"] = "password",
+                   ["VirtualHost"] = "my_vhost",
+                   ["Port"] = "5672",
+                   ["QueueName"] = "TopicSubscriptions"
+               };
+
+               options.AddBus(provider => ConfigureRabbitMQ(provider, _config));
+            });
+
+            services.AddMassTransitHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +62,31 @@ namespace UsersService
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private static IBusControl ConfigureRabbitMQ(IBusRegistrationContext context, Dictionary<string, string> config)
+        {
+
+            var bus = Bus.Factory.CreateUsingRabbitMq(cfg =>
+            {
+                // cfg.UseHealthCheck(context);
+                cfg.Host(config["Host"], config["VirtualHost"], rmqHost =>
+                {
+                    rmqHost.Username(config["UserName"]);
+                    rmqHost.Password(config["Password"]);
+                });
+
+                cfg.ReceiveEndpoint(config["QueueName"], rmqEndpoint =>
+                {
+                    rmqEndpoint.PrefetchCount = 100;
+                    rmqEndpoint.Durable = true;
+                    // rmqEndpoint.ConfigureConsumer<>(context);
+                });
+            });
+
+            bus.Start();
+
+            return bus;
         }
     }
 }
