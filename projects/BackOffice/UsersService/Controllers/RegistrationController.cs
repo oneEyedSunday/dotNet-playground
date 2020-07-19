@@ -1,13 +1,11 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using UsersService.Domain.Requests;
 using Microsoft.AspNetCore.Http;
+using UsersService.Infrastructure.Notifiers;
+using UsersService.Application.Events;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,11 +18,16 @@ namespace UsersService.Controllers
     {
 
         private readonly ILogger<RegistrationController> _logger;
+        private readonly ISendMessage _sender;
 
 
-        public RegistrationController(ILogger<RegistrationController> logger)
+        public RegistrationController(
+            ILogger<RegistrationController> logger,
+            ISendMessage sender
+            )
         {
             _logger = logger;
+            _sender = sender;
         }
 
         // GET: api/values
@@ -43,9 +46,13 @@ namespace UsersService.Controllers
 
         [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult RegisterTopic(TopicRegistration request)
+        public async Task<IActionResult> RegisterTopic(TopicRegistration request)
         {
-            _logger.LogInformation($"Registering topic {request.topicId} for user {request.userId}");
+            _logger.LogInformation($"Registering topic {request.topicId.ToString()} for user {request.userId}");
+            await _sender.SendMessage(new UserSubscribedToTopicEvent {
+                UserId = request.userId,
+                TopicIds = request.topicId
+            }, "topicService");
             return Ok();
         }
     }

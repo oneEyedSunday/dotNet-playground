@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using UsersService.Infrastructure.Filters;
+using UsersService.Infrastructure.Config;
+using UsersService.Infrastructure.Notifiers;
 
 namespace UsersService
 {
@@ -37,21 +39,26 @@ namespace UsersService
                 // So my filter works ;)
                 // options.SuppressModelStateInvalidFilter = true;
             });
+
+            services.AddSingleton<IRabbitMQConfig, RabbitMQConfig>((serviceProvider) =>
+            {
+                var configSections = Configuration.GetSection("Rabbitmq");
+                return new RabbitMQConfig {
+                    Host = configSections["Host"],
+                    UserName = configSections["UserName"],
+                    Password = configSections["Password"],
+                    VirtualHost = configSections["VirtualHost"],
+                    Port = Convert.ToUInt16(configSections["Port"]),
+                    Endpoint = configSections["Endpoint"]
+                };
+            });
             services.AddMassTransit(options =>
             {
-               var _config = new Dictionary<string, string> {
-                   ["Host"] = "localhost",
-                   ["UserName"] = "ispoa",
-                   ["Password"] = "password",
-                   ["VirtualHost"] = "my_vhost",
-                   ["Port"] = "5672",
-                   ["QueueName"] = "TopicSubscriptions"
-               };
-
-               options.AddBus(provider => ConfigureRabbitMQ(provider, _config));
+               options.AddBus(provider => ConfigureRabbitMQ(provider));
             });
 
             services.AddMassTransitHostedService();
+            services.AddTransient<ISendMessage, SendMessageToEndpoint>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,19 +81,20 @@ namespace UsersService
             });
         }
 
-        private static IBusControl ConfigureRabbitMQ(IBusRegistrationContext context, Dictionary<string, string> config)
+        private static IBusControl ConfigureRabbitMQ(IBusRegistrationContext context)
         {
+            IRabbitMQConfig config = context.GetRequiredService<IRabbitMQConfig>();
 
             var bus = Bus.Factory.CreateUsingRabbitMq(cfg =>
             {
                 // cfg.UseHealthCheck(context);
-                cfg.Host(config["Host"], config["VirtualHost"], rmqHost =>
+                cfg.Host(config.Host, config.VirtualHost, rmqHost =>
                 {
-                    rmqHost.Username(config["UserName"]);
-                    rmqHost.Password(config["Password"]);
+                    rmqHost.Username(config.UserName);
+                    rmqHost.Password(config.Password);
                 });
 
-                cfg.ReceiveEndpoint(config["QueueName"], rmqEndpoint =>
+                cfg.ReceiveEndpoint(config.Endpoint, rmqEndpoint =>
                 {
                     rmqEndpoint.PrefetchCount = 100;
                     rmqEndpoint.Durable = true;
