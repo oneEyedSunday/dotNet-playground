@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using UsersService.Infrastructure.Filters;
 
 namespace UsersService
 {
@@ -26,7 +27,16 @@ namespace UsersService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(ValidateModelAttribute));
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                // Suppress automatic model validation
+                // So my filter works ;)
+                // options.SuppressModelStateInvalidFilter = true;
+            });
             services.AddMassTransit(options =>
             {
                var _config = new Dictionary<string, string> {
