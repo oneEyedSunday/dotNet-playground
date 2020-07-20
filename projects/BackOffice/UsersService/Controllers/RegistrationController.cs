@@ -52,7 +52,7 @@ namespace UsersService.Controllers
             await _sender.SendMessage(new UserSubscribedToTopicEvent {
                 UserId = request.userId,
                 TopicIds = request.topicId
-            }, "topicService");
+            }, "topicsService");
             return Ok();
         }
     }

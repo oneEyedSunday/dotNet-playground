@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace UsersService.Infrastructure.Config
+namespace TopicsService.Infrastructure.Config
 {
     public interface IRabbitMQConfig
     {

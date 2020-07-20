@@ -15,6 +15,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Routing;
 using TopicsService.Infrastructure.Filters;
+using TopicsService.Infrastructure.Config;
+using TopicsService.Application.Consumers;
 
 namespace TopicsService
 {
@@ -35,18 +37,24 @@ namespace TopicsService
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
             });
 
+            services.AddSingleton<IRabbitMQConfig, RabbitMQConfig>(serviceProvider =>
+            {
+                var configSections = Configuration.GetSection("Rabbitmq");
+                return new RabbitMQConfig {
+                    Host = configSections["Host"],
+                    UserName = configSections["UserName"],
+                    Password = configSections["Password"],
+                    VirtualHost = configSections["VirtualHost"],
+                    Port = Convert.ToUInt16(configSections["Port"]),
+                    Endpoint = configSections["Endpoint"],
+                    DurableQueue = Convert.ToBoolean(configSections["DurableQueue"])
+                };
+            });
+
             services.AddMassTransit(options =>
             {
-               var _config = new Dictionary<string, string> {
-                   ["Host"] = "localhost",
-                   ["UserName"] = "ispoa",
-                   ["Password"] = "password",
-                   ["VirtualHost"] = "my_vhost",
-                   ["Port"] = "5672",
-                   ["QueueName"] = "TopicSubscriptions"
-               };
-
-               options.AddBus(provider => ConfigureRabbitMQ(provider, _config));
+                options.AddConsumer<RegistrationSuccessfulConsumer>();
+                options.AddBus(provider => ConfigureRabbitMQ(provider));
             });
 
             services.AddMassTransitHostedService();
@@ -77,23 +85,24 @@ namespace TopicsService
             });
         }
 
-        private static IBusControl ConfigureRabbitMQ(IBusRegistrationContext context, Dictionary<string, string> config)
+        private static IBusControl ConfigureRabbitMQ(IBusRegistrationContext context)
         {
+            IRabbitMQConfig config = context.GetRequiredService<IRabbitMQConfig>();
 
             var bus = Bus.Factory.CreateUsingRabbitMq(cfg =>
             {
                 // cfg.UseHealthCheck(context);
-                cfg.Host(config["Host"], config["VirtualHost"], rmqHost =>
+                cfg.Host(config.Host, config.VirtualHost, rmqHost =>
                 {
-                    rmqHost.Username(config["UserName"]);
-                    rmqHost.Password(config["Password"]);
+                    rmqHost.Username(config.UserName);
+                    rmqHost.Password(config.Password);
                 });
 
-                cfg.ReceiveEndpoint(config["QueueName"], rmqEndpoint =>
+                cfg.ReceiveEndpoint(config.Endpoint, rmqEndpoint =>
                 {
-                    rmqEndpoint.PrefetchCount = 100;
-                    rmqEndpoint.Durable = true;
-                    // rmqEndpoint.ConfigureConsumer<>(context);
+                    rmqEndpoint.PrefetchCount = config.PrefetchCount;
+                    rmqEndpoint.Durable = config.DurableQueue;
+                    rmqEndpoint.ConfigureConsumer<RegistrationSuccessfulConsumer>(context);
                 });
             });
 

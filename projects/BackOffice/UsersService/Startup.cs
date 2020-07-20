@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using UsersService.Infrastructure.Filters;
 using UsersService.Infrastructure.Config;
 using UsersService.Infrastructure.Notifiers;
+using UsersService.Application.Consumers;
 
 namespace UsersService
 {
@@ -49,12 +50,14 @@ namespace UsersService
                     Password = configSections["Password"],
                     VirtualHost = configSections["VirtualHost"],
                     Port = Convert.ToUInt16(configSections["Port"]),
-                    Endpoint = configSections["Endpoint"]
+                    Endpoint = configSections["Endpoint"],
+                    DurableQueue = Convert.ToBoolean(configSections["DurableQueue"])
                 };
             });
             services.AddMassTransit(options =>
             {
-               options.AddBus(provider => ConfigureRabbitMQ(provider));
+                options.AddConsumer<RegistrationSuccessfulConsumer>();
+                options.AddBus(provider => ConfigureRabbitMQ(provider));
             });
 
             services.AddMassTransitHostedService();
@@ -96,9 +99,9 @@ namespace UsersService
 
                 cfg.ReceiveEndpoint(config.Endpoint, rmqEndpoint =>
                 {
-                    rmqEndpoint.PrefetchCount = 100;
-                    rmqEndpoint.Durable = true;
-                    // rmqEndpoint.ConfigureConsumer<>(context);
+                    rmqEndpoint.PrefetchCount = config.PrefetchCount;
+                    rmqEndpoint.Durable = config.DurableQueue;
+                    rmqEndpoint.ConfigureConsumer<RegistrationSuccessfulConsumer>(context);
                 });
             });
 
