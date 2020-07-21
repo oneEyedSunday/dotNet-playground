@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoBasic", "TodoBasic\Todo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicWithAuth", "BasicWithAuth\BasicWithAuth.csproj", "{7337871F-0D51-4D27-B78F-6E8FE22ED30C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WithControllers", "WithControllers\WithControllers.csproj", "{D973BFAA-78D2-44FD-B701-68625B113CDC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|anycpu = Debug|anycpu
@@ -19,5 +21,9 @@ Global
 		{7337871F-0D51-4D27-B78F-6E8FE22ED30C}.Debug|anycpu.Build.0 = Debug|Any CPU
 		{7337871F-0D51-4D27-B78F-6E8FE22ED30C}.Release|anycpu.ActiveCfg = Release|Any CPU
 		{7337871F-0D51-4D27-B78F-6E8FE22ED30C}.Release|anycpu.Build.0 = Release|Any CPU
+		{D973BFAA-78D2-44FD-B701-68625B113CDC}.Debug|anycpu.ActiveCfg = Debug|Any CPU
+		{D973BFAA-78D2-44FD-B701-68625B113CDC}.Debug|anycpu.Build.0 = Debug|Any CPU
+		{D973BFAA-78D2-44FD-B701-68625B113CDC}.Release|anycpu.ActiveCfg = Release|Any CPU
+		{D973BFAA-78D2-44FD-B701-68625B113CDC}.Release|anycpu.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
