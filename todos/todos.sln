@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WithControllers", "WithCont
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WithControllersauthJWT", "WithControllersAuthJWT\WithControllersauthJWT.csproj", "{D96570EF-2639-404D-A4F6-48060EDE0F42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WithDI", "WithDI\WithDI.csproj", "{2EB28696-96E4-4829-ACAD-9B9ADC201AF4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|anycpu = Debug|anycpu
@@ -31,5 +33,9 @@ Global
 		{D96570EF-2639-404D-A4F6-48060EDE0F42}.Debug|anycpu.Build.0 = Debug|Any CPU
 		{D96570EF-2639-404D-A4F6-48060EDE0F42}.Release|anycpu.ActiveCfg = Release|Any CPU
 		{D96570EF-2639-404D-A4F6-48060EDE0F42}.Release|anycpu.Build.0 = Release|Any CPU
+		{2EB28696-96E4-4829-ACAD-9B9ADC201AF4}.Debug|anycpu.ActiveCfg = Debug|Any CPU
+		{2EB28696-96E4-4829-ACAD-9B9ADC201AF4}.Debug|anycpu.Build.0 = Debug|Any CPU
+		{2EB28696-96E4-4829-ACAD-9B9ADC201AF4}.Release|anycpu.ActiveCfg = Release|Any CPU
+		{2EB28696-96E4-4829-ACAD-9B9ADC201AF4}.Release|anycpu.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
