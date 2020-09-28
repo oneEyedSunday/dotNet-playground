@@ -2,7 +2,10 @@
 using System.Threading.Tasks;
 using StreamDemo;
 using Grpc.Net.Client;
+using Grpc.Core;
+using Google.Protobuf.WellKnownTypes;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Client
 {
@@ -25,6 +28,22 @@ namespace Client
 
             Console.WriteLine($"Reply: {reply.Message}...");
             Console.ReadKey();
+
+            Console.WriteLine("Streaming responses now...");
+
+            var pulseClient = new Heartbeat.HeartbeatClient(channel);
+
+            CancellationTokenSource streamCTS = new CancellationTokenSource();
+
+            while (!streamCTS.IsCancellationRequested)
+            {
+                AsyncServerStreamingCall<Pulse> response = pulseClient.GetHeartbeatStream(new Empty(), cancellationToken: streamCTS.Token);
+
+                await foreach (Pulse pulse in response.ResponseStream.ReadAllAsync(cancellationToken: streamCTS.Token))
+                {
+                    Console.WriteLine($"[+] {pulse.EventTime} {pulse.Path} {pulse.EventStatus}");
+                }
+            }
         }
     }
 }
