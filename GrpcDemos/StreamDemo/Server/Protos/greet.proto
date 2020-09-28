@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "Server";
+option csharp_namespace = "StreamDemo";
 
 package greet;
 

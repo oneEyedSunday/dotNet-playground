@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
+using StreamDemo;
 using Microsoft.Extensions.Logging;
 
 namespace Server
