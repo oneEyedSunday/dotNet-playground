@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option csharp_namespace = "StreamDemo";
+
+package Heartbeat;
+
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service Heartbeat {
+    rpc GetHeartbeatStream (google.protobuf.Empty) returns (stream Pulse);
+}
+
+message Pulse {
+    google.protobuf.Timestamp eventTime = 1;
+    string path = 2;
+    float weight = 3;
+    int32 windowOffset = 4;
+    EventStatus eventStatus = 5;
+
+    enum EventStatus {
+        HANDLED = 0;
+        PENDING = 1;
+        FAILED = 2;
+        RETRIED = 3;
+        REMOVED = 4;
+    }
+}
+
