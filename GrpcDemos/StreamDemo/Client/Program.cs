@@ -6,6 +6,7 @@ using Grpc.Core;
 using Google.Protobuf.WellKnownTypes;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Client
 {
@@ -29,11 +30,35 @@ namespace Client
             Console.WriteLine($"Reply: {reply.Message}...");
             Console.ReadKey();
 
+            Console.WriteLine("Client Streaming now....");
+
+            var clientStreamClient = new ClientEvent.ClientEventClient(channel);
+            var sent = 0;
+
+            using(var streamCall = clientStreamClient.UploadEvents())
+            {
+                while (sent < 20)
+                {
+                    streamCall.RequestStream.WriteAsync(new StringValue{ Value = "Some message here" });
+                    sent++;
+                    await Task.Delay(TimeSpan.FromSeconds(2));
+                }
+                await streamCall.RequestStream.CompleteAsync();
+
+                var response = await streamCall.ResponseAsync;
+
+                Console.WriteLine($"Call took {response.ElapsedTime} seconds to complete");
+                Console.WriteLine($"Call sttaus was {response.CollationStatus}");
+            }
+
+
+            Console.ReadKey();
+
             Console.WriteLine("Streaming responses now...");
 
             var pulseClient = new Heartbeat.HeartbeatClient(channel);
 
-            CancellationTokenSource streamCTS = new CancellationTokenSource();
+            CancellationTokenSource streamCTS = new CancellationTokenSource(TimeSpan.FromSeconds(20));
 
             while (!streamCTS.IsCancellationRequested)
             {
