@@ -64,10 +64,51 @@ namespace Client
             {
                 AsyncServerStreamingCall<Pulse> response = pulseClient.GetHeartbeatStream(new Empty(), cancellationToken: streamCTS.Token);
 
-                await foreach (Pulse pulse in response.ResponseStream.ReadAllAsync(cancellationToken: streamCTS.Token))
+                try
                 {
-                    Console.WriteLine($"[+] {pulse.EventTime} {pulse.Path} {pulse.EventStatus}");
+                    await foreach (Pulse pulse in response.ResponseStream.ReadAllAsync(cancellationToken: streamCTS.Token))
+                    {
+                        Console.WriteLine($"[+] {pulse.EventTime} {pulse.Path} {pulse.EventStatus}");
+                    }
                 }
+                catch (RpcException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                
+            }
+
+            Console.ReadKey();
+
+            Console.WriteLine("Bidirectional streaming now...");
+
+            var chatClient = new ChatService.ChatServiceClient(channel);
+
+            using (var call = chatClient.Chat())
+            {
+                var responseReaderTask = Task.Run(async () =>
+                {
+                    while (await call.ResponseStream.MoveNext())
+                    {
+                        var note = call.ResponseStream.Current;
+                        Console.WriteLine("Received " + note);
+                    }
+                });
+
+                string[] dataDump = new string[] {
+                    "Sergio Reguilon",
+                    "Mendy",
+                    "Mason Mount",
+                    "Gabriel Heinze",
+                    "Gonzalo Higuain"
+                };
+
+                foreach (var payload in dataDump)
+                {
+                    await call.RequestStream.WriteAsync(new StringValue { Value = payload });
+                }
+                await call.RequestStream.CompleteAsync();
+                await responseReaderTask;
             }
         }
     }
