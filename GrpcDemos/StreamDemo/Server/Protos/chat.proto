@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option csharp_namespace = "StreamDemo";
+
+package Chat;
+import "google/protobuf/wrappers.proto";
+
+service ChatService {
+    rpc Chat (stream google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
+}
