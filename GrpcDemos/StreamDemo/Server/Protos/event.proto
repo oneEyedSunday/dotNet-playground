@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option csharp_namespace = "StreamDemo";
+
+package ClientEvent;
+
+import "google/protobuf/wrappers.proto";
+
+service ClientEvent {
+    rpc UploadEvents (stream google.protobuf.StringValue) returns (EventResponseStatus);
+}
+
+
+message EventResponseStatus {
+    ProcessStatus collationStatus = 1;
+    fixed64 elapsedTime = 2;
+
+    enum ProcessStatus {
+        FAILURE = 0;
+        PACKETS_DROPPED = 1;
+        SUCCESS = 2;
+    }
+}

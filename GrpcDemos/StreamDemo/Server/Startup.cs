@@ -33,6 +33,8 @@ namespace Server
             {
                 endpoints.MapGrpcService<GreeterService>();
                 endpoints.MapGrpcService<HeartBeatService>();
+                endpoints.MapGrpcService<EventService>();
+                endpoints.MapGrpcService<ChatService>();
 
                 endpoints.MapGet("/", async context =>
                 {
