@@ -1,0 +1,26 @@
+version: '3.7'
+services:
+  db1:
+    container_name: shard1
+    image: mysql:5.7.22
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: pw
+    ports:
+      - "3310:3306"
+    volumes:
+      - shard1-data:/var/lib/mysql
+  db2:
+    container_name: shard2
+    image: mysql:5.7.22
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: pw
+    ports:
+      - "3311:3306"
+    volumes:
+      - shard2-data:/var/lib/mysql
+
+volumes:
+  shard1-data:
+  shard2-data:
